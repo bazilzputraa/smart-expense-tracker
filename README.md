@@ -1,36 +1,168 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💎 Piggy - Smart Savings Tracker 🎯
 
-## Getting Started
+Aplikasi penabungann dengan AI-powered Categorization yang buat menabung menjadi lebih menyenangkan! 🎉 Tulis saja transaksi seperti "Beli kopi di Starbuck 50rb" atau "Gaji bulan ini 10jt" dan AI akan otomatis memisahkan nominal, kategori, dan merchant-nya!
 
-First, run the development server:
+## ✨ Fitur Utama
+
+- 🤖 **AI Categorization** -智能 Indonesian NER dengan OpenAI GPT-4o-mini
+- 💰 **Savings Tracker** - Pantau progres menabung dengan persentase
+- 🎨 **UI Colorful & Joyful** - Desain ceria dan tidak membosankan
+- 📱 **Responsif** - Bisa digunakan di desktop dan mobile
+- 🔤 **Bilingual** - Mendukung Bahasa Indonesia
+- 🎯 **Poppins + Montserrat** - Font modern yang bersih
+- 🗄️ **Supabase** - Database gratis PostgreSQL
+- 🔍 **pgvector** - Semantic search berbasis makna
+
+---
+
+## 🚀 Cara Menjalankan (Local)
 
 ```bash
+# Clone / download
+cd smart-expense-tracker
+
+# Install dependencies
+npm install
+
+# Copy environment variables
+cp .env.example .env.local
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka: **http://localhost:3000**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🌐 Hosting ke Vercel (Gratis)
 
-## Learn More
+### Cara 1: Deploy Otomatis (Recommended)
 
-To learn more about Next.js, take a look at the following resources:
+1. Push ke GitHub:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/username/smart-expense-tracker.git
+git push -u origin main
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Buka https://vercel.com
+3. Klik "Add New..." → Project
+4. Import dari GitHub
+5. Klik "Deploy"!
 
-## Deploy on Vercel
+### Cara 2: CLI (Yang sudah dilakukan)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm i -g vercel
+vercel login
+vercel --prod
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🔧 Setup Environment Variables
+
+### Supabase (Gratis 500MB)
+
+1. Daftar di https://supabase.com
+2. Buat New Project
+3. Project Settings → API
+4. Copy URL dan anon key ke .env.local:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+5. SQL Editor → Run supabase-schema.sql
+
+### OpenAI (Gratis $5 Credit)
+
+1. Daftar di https://platform.openai.com
+2. API Keys → Create new key
+3. Copy ke .env.local:
+
+```env
+OPENAI_API_KEY=sk-your-api-key-here
+```
+
+---
+
+## 📝 Contoh Transaksi
+
+### Pemasukan (Income):
+
+```
+"Gaji bulan Agustus 8jt"
+"Freelance desain 500rb"
+"THR 5jt"
+"Bonus tahun baru 10jt"
+```
+
+### Pengeluaran (Expense):
+
+```
+"Beli kopi starbucks 45rb"
+"Naik gojek kampus 25rb"
+"Belanja supermarket 300rb"
+"Beli snack 15rb"
+"Makan siang rm 28rb"
+```
+
+---
+
+## 🆓 Gratis Tanpa Bayar!
+
+| Service  | Plan        | Limit          |
+| -------- | ----------- | -------------- |
+| Supabase | Free        | 500MB DB, Auth |
+| OpenAI   | Paid & Free | $5 credit      |
+| Vercel   | Hobby       | Unlimited      |
+
+---
+
+## 📁 Struktur Project
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   └── parse-transaction/
+│   │       └── route.ts      ← AI API endpoint
+│   ├── globals.css          ← Styles + Fonts
+│   └── page.tsx            ← Main page
+├── components/
+│   ├── forms/
+│   │   ├── transaction-input.tsx
+│   │   └── transaction-list.tsx
+│   └── ui/                 ← Shadcn components
+├── lib/
+│   ├── openai.ts          ← OpenAI client
+│   ├── supabase.ts         ← Supabase client
+│   └── utils.ts            ← Utilities
+├── services/
+│   └── transaction.service.ts
+└── types/
+    └── transaction.ts
+```
+
+---
+
+## 🌎 Live Demo
+
+**Production URL:** https://smart-expense-tracker-sigma-silk.vercel.app
+
+---
+
+## 📄 License
+
+MIT - Gratis untuk portofolio danbelajar!
+
+---
+
+**Dibuat dengan ❤️ • Cocok untuk Portofolio! 🚀**
