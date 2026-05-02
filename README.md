@@ -9,8 +9,7 @@ Aplikasi penabungann dengan AI-powered Categorization yang buat menabung menjadi
 - 🎨 **UI Colorful & Joyful** - Desain ceria dan tidak membosankan
 - 📱 **Responsif** - Bisa digunakan di desktop dan mobile
 - 🔤 **Bilingual** - Mendukung Bahasa Indonesia
-- 🎯 **Poppins + Montserrat** - Font modern yang bersih
-- 🗄️ **Supabase** - Database gratis PostgreSQL
+- 🗄️ **Supabase** - Database PostgreSQL
 - 🔍 **pgvector** - Semantic search berbasis makna
 
 ---
@@ -32,8 +31,6 @@ npm run dev
 ```
 
 Buka: **http://localhost:3000**
-
----
 
 ---
 
