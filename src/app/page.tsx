@@ -14,6 +14,31 @@ interface Transaction {
   created_at: string;
 }
 
+function SavingsRing({ rate, size = 72 }: { rate: number; size?: number }) {
+  const r = size * 0.42;
+  const circumference = 2 * Math.PI * r;
+  const offset = circumference * (1 - Math.min(Math.max(rate, 0), 100) / 100);
+  const strokeWidth = size * 0.08;
+
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#e5e7eb" strokeWidth={strokeWidth} />
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={r}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+        className="text-emerald-400 transition-all duration-700"
+      />
+    </svg>
+  );
+}
+
 export default function Home() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
@@ -30,93 +55,104 @@ export default function Home() {
     setTransactions((prev) => [newTransaction, ...prev]);
   };
 
-  // Calculate savings progress
-  const totalIncome = transactions
-    .filter((t) => t.type === "income")
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const totalExpense = transactions
-    .filter((t) => t.type === "expense")
-    .reduce((sum, t) => sum + t.amount, 0);
-
+  const totalIncome = transactions.filter((t) => t.type === "income").reduce((sum, t) => sum + t.amount, 0);
+  const totalExpense = transactions.filter((t) => t.type === "expense").reduce((sum, t) => sum + t.amount, 0);
   const savings = totalIncome - totalExpense;
   const savingsRate = totalIncome > 0 ? Math.round((savings / totalIncome) * 100) : 0;
+  const hasTransactions = transactions.length > 0;
+
+  const fmt = (n: number) =>
+    new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-400 via-pink-500 to-purple-600">
-      {/* Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 left-10 w-40 h-40 bg-white/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/3 right-20 w-60 h-60 bg-pink-300/20 rounded-full blur-3xl animate-pulse delay-700"></div>
-        <div className="absolute bottom-20 left-1/4 w-48 h-48 bg-yellow-300/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute bottom-10 right-1/3 w-32 h-32 bg-purple-300/20 rounded-full blur-3xl animate-pulse delay-500"></div>
-        
-        {/* Floating emojis */}
-        <div className="absolute top-20 right-1/4 text-4xl animate-bounce opacity-30">💰</div>
-        <div className="absolute top-40 left-1/3 text-3xl animate-bounce delay-300 opacity-30">🐷</div>
-        <div className="absolute bottom-40 right-1/2 text-3xl animate-bounce delay-500 opacity-30">✨</div>
-        <div className="absolute top-1/2 left-20 text-2xl animate-bounce delay-700 opacity-30">🌟</div>
-      </div>
+    <div className="min-h-screen bg-[#f5f3f0]">
+      <div className="max-w-5xl mx-auto p-4 md:p-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
 
-      <div className="relative max-w-3xl mx-auto p-6 pb-20">
-        {/* Header */}
-        <header className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-white/30 backdrop-blur-sm px-4 py-2 rounded-full mb-4">
-            <span className="text-sm font-semibold text-white">🎯 Smart Savings Tracker</span>
+          {/* Brand */}
+          <div className="md:col-span-2 bg-white rounded-xl p-5 md:p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-lg">🐷</span>
+              <h1 className="font-heading text-2xl md:text-3xl font-bold text-gray-800">
+                Piggy
+              </h1>
+            </div>
+            <p className="text-gray-500 text-sm">
+              Yuk, menabung dengan cara yang lebih menyenangkan!
+            </p>
           </div>
-          
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-3 drop-shadow-lg" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-            Piggy 💎
-          </h1>
-          <p className="text-white/90 text-lg font-medium">
-            Yuk, menabung dengan cara yang lebih menyenangkan! 🎉
-          </p>
-        </header>
 
-        {/* Savings Progress Card */}
-        {transactions.length > 0 && (
-          <div className="mb-8">
-            <div className="bg-white/20 backdrop-blur-md rounded-3xl p-6 shadow-xl border-2 border-white/30">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-white/80 text-sm font-medium">Total Tabungan 💰</p>
-                  <p className="text-3xl font-bold text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                    {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(savings)}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className={`text-5xl font-bold ${savingsRate >= 20 ? 'text-yellow-300' : savingsRate >= 10 ? 'text-white' : 'text-pink-200'}`}>
-                    {savingsRate}%
-                  </div>
-                  <p className="text-white/70 text-xs">tingkat menabung</p>
-                </div>
+          {/* Savings rate */}
+          <div className="bg-white rounded-xl p-5 md:p-6 shadow-sm flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center gap-2">
+              <div className={hasTransactions ? "text-emerald-500" : "text-gray-300"}>
+                <SavingsRing rate={savingsRate} size={72} />
               </div>
-              
-              {/* Progress Bar */}
-              <div className="h-4 bg-white/20 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-yellow-300 to-green-400 rounded-full transition-all duration-500 ease-out"
-                  style={{ width: `${Math.min(Math.max(savingsRate, 0), 100)}%` }}
-                ></div>
-              </div>
-              
-              <div className="flex justify-between mt-3 text-xs text-white/70">
-                <span>💚 Target: 20%</span>
-                <span>🎉 Hebat: 50%+</span>
+              <div className="text-center">
+                <span className={`text-2xl font-bold font-heading ${hasTransactions ? "text-gray-800" : "text-gray-300"}`}>
+                  {savingsRate}%
+                </span>
+                <p className="text-xs text-gray-400 mt-0.5">tingkat menabung</p>
               </div>
             </div>
           </div>
-        )}
 
-        {/* Main Content */}
-        <main className="space-y-6">
-          <TransactionInput onTransactionAdded={handleTransactionAdded} />
-          <TransactionList transactions={transactions} />
-        </main>
+          {/* Stats row */}
+          <div className="md:col-span-3 grid grid-cols-3 gap-3 md:gap-4">
+            {/* Income */}
+            <div className="bg-gradient-to-br from-emerald-50/80 to-white rounded-xl p-4 shadow-sm">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-sm">📥</span>
+                <p className="text-xs font-medium text-gray-500">Pemasukan</p>
+              </div>
+              <p className="font-heading text-sm md:text-base font-bold text-emerald-700 truncate">
+                {hasTransactions ? fmt(totalIncome) : "—"}
+              </p>
+            </div>
 
-        {/* Footer */}
-        <footer className="text-center mt-12 text-white/60 text-sm">
-          <p>✨ Dibuat dengan ❤️ • Gratis untuk Portofolio!</p>
+            {/* Expense */}
+            <div className="bg-gradient-to-br from-rose-50/80 to-white rounded-xl p-4 shadow-sm">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-sm">💸</span>
+                <p className="text-xs font-medium text-gray-500">Pengeluaran</p>
+              </div>
+              <p className="font-heading text-sm md:text-base font-bold text-rose-600 truncate">
+                {hasTransactions ? fmt(totalExpense) : "—"}
+              </p>
+            </div>
+
+            {/* Balance */}
+            <div className="bg-gradient-to-br from-amber-50/80 to-white rounded-xl p-4 shadow-sm">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-sm">💰</span>
+                <p className="text-xs font-medium text-gray-500">Saldo</p>
+              </div>
+              <p className={`font-heading text-sm md:text-base font-bold truncate ${savings >= 0 ? "text-amber-700" : "text-rose-600"}`}>
+                {hasTransactions ? fmt(savings) : "—"}
+              </p>
+            </div>
+          </div>
+
+          {/* Transaction Input */}
+          <div className="md:col-span-3 bg-white rounded-xl p-5 md:p-6 shadow-sm">
+            <h2 className="font-heading text-sm font-semibold text-gray-700 mb-3 flex items-center gap-1.5">
+              <span>✏️</span> Catat Transaksi
+            </h2>
+            <TransactionInput onTransactionAdded={handleTransactionAdded} />
+          </div>
+
+          {/* Transaction List */}
+          <div className="md:col-span-3 bg-white rounded-xl p-5 md:p-6 shadow-sm">
+            <h2 className="font-heading text-sm font-semibold text-gray-700 mb-3 flex items-center gap-1.5">
+              <span>📊</span> Riwayat Transaksi
+            </h2>
+            <TransactionList transactions={transactions} />
+          </div>
+
+        </div>
+
+        <footer className="text-center mt-6 text-gray-400 text-xs">
+          <p>© 2026 Piggy • Saving Apps</p>
         </footer>
       </div>
     </div>

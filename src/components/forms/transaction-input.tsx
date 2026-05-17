@@ -3,12 +3,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-} from "@/components/ui/card";
 
 interface ParsedTransaction {
   amount: number;
@@ -49,7 +43,7 @@ export default function TransactionInput({ onTransactionAdded }: TransactionInpu
       }
 
       setResult(data);
-      
+
       if (onTransactionAdded) {
         onTransactionAdded({ ...data, note: text });
       }
@@ -80,120 +74,74 @@ export default function TransactionInput({ onTransactionAdded }: TransactionInpu
     return emojis[category.toLowerCase()] || "📦";
   };
 
-  const getTypeIcon = (type: string) => {
-    return type === "expense" ? "💸" : "📥";
-  };
-
-  const getTypeLabel = (type: string) => {
-    return type === "expense" ? "Pengeluaran" : "Pemasukan";
-  };
-
-  const getTypeGradient = (type: string) => {
-    return type === "expense" 
-      ? "from-red-500 to-pink-500" 
-      : "from-green-500 to-teal-500";
-  };
-
   return (
-    <Card className="w-full shadow-2xl border-0 overflow-hidden" style={{ borderRadius: '1.5rem' }}>
-      <CardContent className="p-0">
-        <form onSubmit={handleSubmit} className="p-6">
-          <div className="flex flex-col gap-4">
-            <div>
-              <label className="text-white/80 text-sm font-semibold ml-1">
-                ✏️ Catat Transaksi
-              </label>
-              <Input
-                placeholder="Contoh: Gaji bulan ini 10jt atau Beli kopi 25rb"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                className="h-14 text-lg bg-white/90 border-2 border-white/20 focus:border-pink-400 transition-all rounded-2xl mt-2"
-                disabled={loading}
-              />
-            </div>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Input
+            placeholder="Contoh: Gaji bulan ini 10jt atau Beli kopi 25rb"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            className="flex-1 h-11 text-base bg-gray-50 border-gray-200 focus:border-amber-400 rounded-lg"
+            disabled={loading}
+          />
+          <Button
+            type="submit"
+            disabled={loading || !text.trim()}
+            className="h-11 px-5 font-semibold rounded-lg shrink-0 bg-amber-500 hover:bg-amber-600 text-white"
+          >
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <span className="animate-spin text-sm">🌀</span> Memproses...
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5">
+                🔍 Analisis
+              </span>
+            )}
+          </Button>
+        </div>
+      </form>
 
-            <Button
-              type="submit"
-              disabled={loading || !text.trim()}
-              className="h-14 text-lg font-bold rounded-2xl shadow-lg transition-all hover:shadow-xl"
-              style={{ 
-                background: 'linear-gradient(135deg, #f472b6 0%, #a855f7 100%)',
-              }}
-            >
-              {loading ? (
-                <span className="flex items-center gap-2">
-                  <span className="animate-spin">🌀</span> Memproses...
-                </span>
-              ) : (
-                <span className="flex items-center gap-2">
-                  🔍 Analisis & Simpan
-                </span>
-              )}
-            </Button>
-          </div>
-        </form>
+      {error && (
+        <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+          ⚠️ {error}
+        </div>
+      )}
 
-        {error && (
-          <div className="px-6 pb-6">
-            <div className="p-4 bg-red-50 border-2 border-red-200 rounded-2xl text-red-600 text-sm font-medium">
-              ⚠️ {error}
+      {result && (
+        <div className="mt-3 p-4 bg-amber-50/80 border border-amber-100 rounded-lg">
+          <p className="text-xs font-medium text-amber-700 mb-2 flex items-center gap-1">
+            <span>✅</span> Hasil Analisis
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="bg-white rounded-lg p-2.5">
+              <p className="text-[10px] text-gray-500">Jumlah</p>
+              <p className="text-sm font-bold text-gray-800">{formatCurrency(result.amount)}</p>
             </div>
-          </div>
-        )}
-
-        {result && (
-          <div className="px-6 pb-6">
-            <div className="p-5 bg-gradient-to-br from-yellow-50 to-pink-50 rounded-2xl border-2 border-yellow-200">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl">✅</span>
-                <h3 className="font-bold text-gray-800" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                  Hasil Analisis
-                </h3>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-3">
-                {/* Amount */}
-                <div className="p-4 bg-white rounded-2xl shadow-sm">
-                  <p className="text-xs text-gray-500 font-medium">Jumlah</p>
-                  <p className="text-xl font-bold text-gray-800" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                    {formatCurrency(result.amount)}
-                  </p>
-                </div>
-                
-                {/* Type */}
-                <div className={`p-4 bg-gradient-to-r ${getTypeGradient(result.type)} rounded-2xl shadow-sm`}>
-                  <p className="text-xs text-white/80">Jenis</p>
-                  <p className="text-lg font-bold text-white">
-                    {getTypeIcon(result.type)} {getTypeLabel(result.type)}
-                  </p>
-                </div>
-                
-                {/* Category */}
-                <div className="p-4 bg-white rounded-2xl shadow-sm">
-                  <p className="text-xs text-gray-500 font-medium">Kategori</p>
-                  <p className="font-semibold text-gray-700">
-                    {getCategoryEmoji(result.category)} {result.category}
-                  </p>
-                </div>
-                
-                {/* Merchant */}
-                <div className="p-4 bg-white rounded-2xl shadow-sm">
-                  <p className="text-xs text-gray-500 font-medium">Merchant</p>
-                  <p className="font-semibold text-gray-700">{result.merchant}</p>
-                </div>
-              </div>
+            <div className={`rounded-lg p-2.5 ${result.type === "expense" ? "bg-rose-50" : "bg-emerald-50"}`}>
+              <p className="text-[10px] text-gray-500">Jenis</p>
+              <p className="text-sm font-semibold text-gray-800">
+                {result.type === "expense" ? "💸 Pengeluaran" : "📥 Pemasukan"}
+              </p>
             </div>
-          </div>
-        )}
-        
-        {/* Tips */}
-        <div className="px-6 pb-6">
-          <div className="flex items-center gap-2 text-xs text-white/60">
-            <span>💡</span>
-            <span>Tips: Ketik "gaji" untuk pemasukan, "beli" untuk pengeluaran</span>
+            <div className="bg-white rounded-lg p-2.5">
+              <p className="text-[10px] text-gray-500">Kategori</p>
+              <p className="text-sm font-semibold text-gray-700">
+                {getCategoryEmoji(result.category)} {result.category}
+              </p>
+            </div>
+            <div className="bg-white rounded-lg p-2.5">
+              <p className="text-[10px] text-gray-500">Merchant</p>
+              <p className="text-sm font-semibold text-gray-700">{result.merchant}</p>
+            </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      )}
+
+      <p className="mt-2 text-[11px] text-gray-400 flex items-center gap-1">
+        <span>💡</span> Tips: Ketik &quot;gaji&quot; untuk pemasukan, &quot;beli&quot; untuk pengeluaran
+      </p>
+    </div>
   );
 }
